@@ -77,15 +77,19 @@ const MusicSection: React.FC = () => {
 
     setIsLoading(trackId);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      // The API key MUST be obtained from process.env.API_KEY.
+      // We use a non-null assertion as we assume it is provided by the environment.
+      const apiKey = process.env.API_KEY!;
+      const ai = new GoogleGenAI({ apiKey });
+      
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash-preview-tts",
         contents: [{ parts: [{ text: prompt }] }],
         config: {
-          responseModalities: [Modality.AUDIO],
+          responseModalalities: [Modality.AUDIO],
           speechConfig: {
             voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: 'Puck' }, // Using 'Puck' for a more mysterious tone
+              prebuiltVoiceConfig: { voiceName: 'Puck' },
             },
           },
         },
@@ -125,7 +129,6 @@ const MusicSection: React.FC = () => {
 
   return (
     <section className="bg-zinc-950 py-40 overflow-hidden relative">
-      {/* Background Synth Waveform Animation Visual */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
         <div className="flex items-center gap-2 h-64">
           {[...Array(40)].map((_, i) => (
